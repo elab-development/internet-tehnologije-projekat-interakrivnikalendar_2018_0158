@@ -20,6 +20,21 @@ export const resetPasswordValidate = async (values) => {
   return errors;
 };
 
+export const registerValidate = async (values) => {
+  const errors = usernameVerify({}, values);
+  passwordVerify(errors, values);
+  emailVerify(errors, values);
+
+  return errors;
+};
+
+export const profileValidate = async (values) => {
+  const errors = emailVerify({}, values);
+
+  return errors;
+};
+
+
 const usernameVerify = (error = {}, values) => {
   if (!values.username) {
     error.username = toast.error('Username is Required!');
@@ -46,6 +61,19 @@ const passwordVerify = (error = {}, values) => {
     error.password = toast.error(
       'Password must have at least one special character!'
     );
+  }
+
+  return error;
+};
+const emailVerify = (error = {}, values) => {
+  const emailCharacters = /^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,4}$/i;
+
+  if (!values.email) {
+    error.email = toast.error('Email is Required!');
+  } else if (values.email.length < 5) {
+    error.email = toast.error('Wrong Email format!');
+  } else if (!emailCharacters.test(values.email)) {
+    error.email = toast.error('Wrong Email format!');
   }
 
   return error;
