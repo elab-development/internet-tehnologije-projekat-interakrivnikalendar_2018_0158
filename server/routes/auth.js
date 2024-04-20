@@ -7,9 +7,9 @@ const router = Router();
 // POST Endpoints
 router.route('/register').post(authController.register);
 router.route('/registerMail').post(authController.registerMail);
-router.route('/authenticate').post((req, res) => {
-  res.json('Authenticate');
-});
+router
+  .route('/authenticate')
+  .post(authMiddleware.verifyUser, (req, res) => res.end());
 router.route('/login').post(authMiddleware.verifyUser, authController.login);
 
 // GET Endpoints
