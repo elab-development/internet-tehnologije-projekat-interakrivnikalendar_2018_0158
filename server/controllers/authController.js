@@ -3,6 +3,8 @@ import bcrypt from 'bcrypt';
 import jwt from 'jsonwebtoken';
 import ENV from '../config.js';
 import otpGenerator from 'otp-generator';
+import nodemailer from 'nodemailer';
+import Mailgen from 'mailgen';
 
 /* ####################################
             BASIC USER ROUTES
@@ -291,3 +293,73 @@ export const register = async (req, res) => {
       });
     } 
   };
+
+  /* ####################################
+              MAILER
+#################################### */
+
+let gmailConfig = {
+  service: 'gmail',
+  auth: {
+    user: ENV.GMAIL_EMAIL,
+    pass: ENV.GMAIL_PASS,
+  },
+};
+
+let etherealConfig = {
+  host: 'smtp.ethereal.email',
+  port: 587,
+  secure: false, // true for 465, false for other ports
+  auth: {
+    user: ENV.ETHEREAL_EMAIL,
+    pass: ENV.ETHEREAL_PASS,
+  },
+};
+
+let transporter = nodemailer.createTransport(gmailConfig);
+
+let MailGenerator = new Mailgen({
+  theme: 'default',
+  product: {
+    name: 'Mailgen',
+    link: 'https://mailgen.js',
+  },
+});
+
+// POST /api/auth/registerMail
+export const registerMail = async (req, res) => {
+  const { username, userEmail, text, subject } = req.body;
+
+  // Email Body
+  let email = {
+    body: {
+      name: username || 'InteractvieCalendar',
+      intro:
+        text ||
+        'Welcome to Interactive Calendar! We are very excited to have you on board.',
+      outro:
+        'Need help? Just reply to this email and we will come back to you as soon as possible!',
+    },
+  };
+
+  let emailBody = MailGenerator.generate(email);
+  let message = {
+    from: ENV.ETHEREAL_EMAIL,
+    to: userEmail,
+    subject: subject || 'Interactive Calendar',
+    html: emailBody,
+  };
+
+  transporter
+    .sendMail(message)
+    .then(() => {
+      return res.status(201).send({
+        message: 'You should receive an email.',
+      });
+    })
+    .catch((error) => {
+      return res.status(500).send({
+        error: 'Something went wrong while sending an email: ' + error,
+      });
+    });
+};
