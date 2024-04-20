@@ -2,6 +2,7 @@ import express from 'express';
 import cors from 'cors';
 import morgan from 'morgan';
 import connect from './database/conn.js';
+import authRouter from './routes/auth.js';
 
 const app = express();
 
@@ -15,6 +16,8 @@ const port = 8000;
 app.get('/', (req, res) => {
   res.status(200).json('Home GET Request');
 });
+
+app.use('/api/auth', authRouter);
 
 connect()
   .then(() => {
