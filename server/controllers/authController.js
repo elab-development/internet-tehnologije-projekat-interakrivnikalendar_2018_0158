@@ -129,7 +129,39 @@ export const register = async (req, res) => {
   
   // GET /api/auth/user/:username
   export const getUser = async (req, res) => {
-    res.json('Get User');
+    const { username } = req.params;
+
+    try {
+      if (!username) {
+        return res.status(501).send({
+          error: 'Invalid username',
+        });
+      }
+
+      User.findOne({ username: username }, (err, user) => {
+        if (err) {
+          return res.status(500).send({
+            error: 'Something went wrong while fetching the user: ' + err,
+          });
+        }
+
+        if (!user) {
+          return res.status(501).send({
+            error: 'Could not find the user',
+          });
+        }
+
+        const { password, ...rest } = user;
+
+        return res.status(200).send({
+          user: rest._doc,
+        });
+      });
+    } catch (error) {
+      return res.status(404).send({
+        error: 'User not found: ' + error,
+      });
+    }
   };
   
   // PUT /api/auth/updateUser
