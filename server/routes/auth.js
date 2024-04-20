@@ -16,7 +16,13 @@ router.route('/login').post(authMiddleware.verifyUser, authController.login);
 
 // GET Endpoints
 router.route('/user/:username').get(authController.getUser);
-router.route('/generateOTP').get(authController.generateOTP);
+router
+  .route('/generateOTP')
+  .get(
+    authMiddleware.verifyUser,
+    authMiddleware.localVariables,
+    authController.generateOTP
+  );
 router.route('/verifyOTP').get(authController.verifyOTP);
 router.route('/createResetSession').get(authController.createResetSession);
 
@@ -24,6 +30,8 @@ router.route('/createResetSession').get(authController.createResetSession);
 router
   .route('/updateUser')
   .put(authMiddleware.authorize, authController.updateUser);
-router.route('/resetPassword').put(authController.resetPassword);
+router
+  .route('/resetPassword')
+  .put(authMiddleware.verifyUser, authController.resetPassword);
 
 export default router;

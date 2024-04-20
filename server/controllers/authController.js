@@ -2,6 +2,7 @@ import User from '../models/User.model.js';
 import bcrypt from 'bcrypt';
 import jwt from 'jsonwebtoken';
 import ENV from '../config.js';
+import otpGenerator from 'otp-generator';
 
 /* ####################################
             BASIC USER ROUTES
@@ -198,20 +199,95 @@ export const register = async (req, res) => {
   
   // GET /api/auth/generateOTP
   export const generateOTP = async (req, res) => {
-    res.json('Generate OTP');
+    req.app.locals.OTP = otpGenerator.generate(6, {
+      lowerCaseAlphabets: false,
+      upperCaseAlphabets: false,
+      specialChars: false,
+    });
+  
+    res.status(201).send({
+      code: req.app.locals.OTP,
+    });
   };
   
   // GET /api/auth/verifyOTP
   export const verifyOTP = async (req, res) => {
-    res.json('Verify OTP');
+      const { code } = req.query;
+    if (parseInt(req.app.locals.OTP) === parseInt(code)) {
+      req.app.locals.OTP = null;
+      req.app.locals.resetSession = true;
+
+      return res.status(201).send({ message: 'OTP Verified Successfully' });
+    }
+
+    return res.status(400).send({
+      error: 'Invalid OTP',
+    });
   };
   
   // GET /api/auth/createResetSession
   export const createResetSession = async (req, res) => {
-    res.json('Create Reset Session');
+    if (req.app.locals.resetSession) {
+      req.app.locals.resetSession = false;
+      return res.status(201).send({
+        message: 'Access Granted.',
+      });
+    }
+  
+    return res.status(440).send({
+      message: 'Session Expired.',
+    });
   };
   
   // PUT /api/auth/createResetSession
   export const resetPassword = async (req, res) => {
-    res.json('Reset Password');
+    try {
+      if (!req.app.locals.resetSession) {
+        return res.status(440).send({
+          message: 'Session Expired.',
+        });
+      }
+  
+      const { username, password } = req.body;
+  
+      try {
+        User.findOne({ username: username })
+          .then((user) => {
+            bcrypt
+              .hash(password, 10)
+              .then((hashedPassword) => {
+                User.updateOne(
+                  { username: user.username },
+                  { password: hashedPassword },
+                  (error, data) => {
+                    if (error) throw error;
+                    req.app.locals.resetSession = false;
+                    return res.status(201).send({
+                      message: 'Password Updated',
+                      data: data,
+                    });
+                  }
+                );
+              })
+              .catch((error) => {
+                return res.status(500).send({
+                  error: 'Something went wrong while hashing password: ' + error,
+                });
+              });
+          })
+          .catch((error) => {
+            return res.status(404).send({
+              error: 'User not found: ' + error,
+            });
+          });
+      } catch (error) {
+        return res.status(500).send({
+          error: 'Something went wrong while resetting the password: ' + error,
+        });
+      }
+    } catch (error) {
+      return res.status(401).send({
+        error: 'Something went wrong: ' + error,
+      });
+    } 
   };

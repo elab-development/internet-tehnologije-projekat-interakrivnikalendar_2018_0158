@@ -37,3 +37,12 @@ export const authorize = async (req, res, next) => {
     });
   }
 };
+
+export const localVariables = (req, res, next) => {
+  req.app.locals = {
+    OTP: null,
+    resetSession: false,
+  };
+
+  next();
+};
