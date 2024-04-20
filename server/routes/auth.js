@@ -21,7 +21,9 @@ router.route('/verifyOTP').get(authController.verifyOTP);
 router.route('/createResetSession').get(authController.createResetSession);
 
 // PUT Endpoints
-router.route('/updateUser').put(authController.updateUser);
+router
+  .route('/updateUser')
+  .put(authMiddleware.authorize, authController.updateUser);
 router.route('/resetPassword').put(authController.resetPassword);
 
 export default router;

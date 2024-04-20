@@ -164,9 +164,32 @@ export const register = async (req, res) => {
     }
   };
   
-  // PUT /api/auth/updateUser
+  // PUT /api/auth/updateUser/:id
   export const updateUser = async (req, res) => {
-    res.json('Update User');
+    try {
+      // const id = req.query.id;
+      const { userId } = req.user;
+  
+      if (userId) {
+        const body = req.body;
+        User.updateOne({ _id: userId }, body, (err, data) => {
+          if (err) throw err;
+  
+          return res.status(201).send({
+            message: 'User information updated',
+            user: data,
+          });
+        });
+      } else {
+        return res.status(401).send({
+          error: 'No ID provided: ' + error,
+        });
+      }
+    } catch (error) {
+      return res.status(401).send({
+        error: 'Something went wrong while updating user data: ' + error,
+      });
+    }
   };
   
   /* ####################################
