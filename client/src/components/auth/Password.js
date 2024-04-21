@@ -1,6 +1,6 @@
 import React from 'react';
-import { Link } from 'react-router-dom';
-import { Toaster } from 'react-hot-toast';
+import { Link, useNavigate } from 'react-router-dom';
+import toast, { Toaster } from 'react-hot-toast';
 import { useFormik } from 'formik';
 
 import styles from '../../styles/Username.module.css';
@@ -8,10 +8,11 @@ import avatar from '../../assets/usercalendar.png';
 import { passwordValidate } from '../../utils/validate';
 import { useFetch } from '../../hooks/fetch.hook';
 import { useAuthStore } from '../../store/store';
+import { loginUser } from '../../api/authRequests';
 import Loader from '../loader';
 
-
 const Password = () => {
+  const navigate = useNavigate();
   const { username } = useAuthStore((state) => state.auth);
   const [{ isLoading, apiData, serverError }] = useFetch(
     `auth/user/${username}`
@@ -25,7 +26,22 @@ const Password = () => {
     validateOnBlur: false,
     validateOnChange: false,
     onSubmit: async (values) => {
-      console.log(values);
+      let loginPromise = loginUser({ username, password: values.password });
+      toast.promise(loginPromise, {
+        loading: 'Checking your credentials...',
+        success: <b>Welcome, {username}!</b>,
+        error: <b>Wrong credentials!</b>,
+      });
+
+      loginPromise
+        .then((res) => {
+          let { token } = res.data;
+          localStorage.setItem('token', token);
+          navigate('/calendar');
+        })
+        .catch((error) => {
+          console.log(error);
+        });
     },
   });
 

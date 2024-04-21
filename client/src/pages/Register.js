@@ -1,15 +1,17 @@
 import React, { useState } from 'react';
-import { Link } from 'react-router-dom';
-import { Toaster } from 'react-hot-toast';
+import { Link, useNavigate } from 'react-router-dom';
+import toast, { Toaster } from 'react-hot-toast';
 import { useFormik } from 'formik';
 
 import styles from '../styles/Username.module.css';
 import avatar from '../assets/usercalendar.png';
 import { registerValidate } from '../utils/validate';
 import { convertToBase64 } from '../utils/convert';
+import { registerUser } from '../api/authRequests';
 
 const Register = () => {
   const [file, setFile] = useState();
+  const navigate = useNavigate();
 
   const formik = useFormik({
     initialValues: {
@@ -21,8 +23,20 @@ const Register = () => {
     validateOnBlur: false,
     validateOnChange: false,
     onSubmit: async (values) => {
-      values = await Object.assign(values, { profile: file || '' });
-      console.log(values);
+      values = Object.assign(values, { profile: file || '' });
+      let registerPromise = registerUser(values);
+      toast.promise(registerPromise, {
+        loading: 'Signing up...',
+        success: <b>Registered Successfully!</b>,
+        error: <b>Something went wrong!</b>,
+      });
+      registerPromise
+        .then(() => {
+          navigate('/username');
+        })
+        .catch((error) => {
+          console.log(error);
+        });
     },
   });
 
@@ -37,7 +51,7 @@ const Register = () => {
       <div className='flex justify-center items-center h-screen'>
         <div
           className={styles.glass}
-          style={{ width: '45%', paddingTop: '3em' }}
+          style={{ width: '45%', paddingTop: '3em', minHeight: '90%' }}
         >
           <div className='title flex flex-col items-center'>
             <h4 className='text-5xl font-bold'>Create an Account</h4>

@@ -4,7 +4,7 @@ import { useNavigate } from 'react-router-dom';
 import styles from '../styles/Homepage.module.css';
 
 const Home = () => {
-  const navigate = useNavigate('/');
+  const navigate = useNavigate();
 
   return (
     <div className='container mx-auto'>

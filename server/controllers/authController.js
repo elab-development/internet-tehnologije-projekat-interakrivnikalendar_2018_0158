@@ -109,6 +109,7 @@ export const register = async (req, res) => {
 
               return res.status(200).send({
                 message: `${user.username} logged in successfully!`,
+                username: user.username,
                 token: token,
               });
             })
@@ -156,9 +157,7 @@ export const register = async (req, res) => {
 
         const { password, ...rest } = user;
 
-        return res.status(200).send({
-          user: rest._doc,
-        });
+        return res.status(200).send(rest._doc);
       });
     } catch (error) {
       return res.status(404).send({
