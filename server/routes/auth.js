@@ -21,7 +21,9 @@ router
     authMiddleware.localVariables,
     authController.generateOTP
   );
-router.route('/verifyOTP').get(authController.verifyOTP);
+router
+  .route('/verifyOTP')
+  .get(authMiddleware.verifyUser, authController.verifyOTP);
 router.route('/createResetSession').get(authController.createResetSession);
 
 // PUT Endpoints

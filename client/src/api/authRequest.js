@@ -75,3 +75,58 @@ export const updateUser = async (response) => {
     return Promise.reject({ error: 'Could not update the user.' });
   }
 };
+
+// Generate OTP
+export const generateOTP = async (username) => {
+    try {
+      const {
+        data: { code },
+        status,
+      } = await axios.get('/api/auth/generateOTP', {
+        params: { username },
+      });
+  
+      if (status === 201) {
+        let {
+          data: { email },
+        } = await getUser({ username });
+        let text = `Your Password Recovery OTP: ${code}. Verify and recover your password!`;
+        await axios.post('/api/auth/registerMail', {
+          username,
+          userEmail: email,
+          text,
+          subject: 'Password Recovery',
+        });
+      }
+  
+      return Promise.resolve(code);
+    } catch (error) {
+      return Promise.reject({ error });
+    }
+  };
+  
+  // Verify OTP
+  export const verifyOTP = async ({ username, code }) => {
+    try {
+      const { data, status } = await axios.get('/api/auth/verifyOTP', {
+        params: { username, code },
+      });
+      return { data, status };
+    } catch (error) {
+      return Promise.reject({ error });
+    }
+  };
+  
+  // Reset Password
+  export const restartPassword = async ({ username, password }) => {
+    try {
+      const { data, status } = await axios.put('/api/auth/resetPassword', {
+        username,
+        password,
+      });
+  
+      return Promise.resolve({ data, status });
+    } catch (error) {
+      return Promise.reject({ error });
+    }
+  };
