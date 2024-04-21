@@ -26,7 +26,7 @@ const Password = () => {
       <div className='flex justify-center items-center h-screen'>
         <div className={styles.glass}>
           <div className='title flex flex-col items-center'>
-            <h4 className='text-5xl font-bold'>Welcome Back!</h4>
+            <h4 className='text-5xl font-bold'>Enter Password!</h4>
             <span className='py-4 text-xl w-2/3 text-center text-gray-500'>
               Organize your Life Better.
             </span>
@@ -53,7 +53,7 @@ const Password = () => {
               <span className='text-gray-500'>
                 Forgot Password?{' '}
                 <Link to='/recovery' className='text-red-500'>
-                  Recover Now!
+                  Recover Now
                 </Link>
               </span>
             </div>
