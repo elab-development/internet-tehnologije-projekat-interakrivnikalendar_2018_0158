@@ -16,7 +16,8 @@ export const authenticate = async (username) => {
 // Get User Details
 export const getUser = async ({ username }) => {
   try {
-    await axios.get(`/api/auth/user/${username}`);
+    const { data } = await axios.get(`/api/auth/user/${username}`);
+    return { data };
   } catch (error) {
     return { error: 'Password does not match!' };
   }
@@ -90,6 +91,7 @@ export const generateOTP = async (username) => {
         let {
           data: { email },
         } = await getUser({ username });
+
         let text = `Your Password Recovery OTP: ${code}. Verify and recover your password!`;
         await axios.post('/api/auth/registerMail', {
           username,
@@ -99,7 +101,7 @@ export const generateOTP = async (username) => {
         });
       }
   
-      return Promise.resolve(code);
+      return Promise.resolve({ code });
     } catch (error) {
       return Promise.reject({ error });
     }

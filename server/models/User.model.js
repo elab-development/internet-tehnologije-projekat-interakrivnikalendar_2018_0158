@@ -20,6 +20,10 @@ const UserSchema = new mongoose.Schema({
   mobile: { type: String },
   address: { type: String },
   profile: { type: String },
+  role: {
+    type: String,
+    default: 'user',
+  },
 });
 
 const User = mongoose.model('User', UserSchema);

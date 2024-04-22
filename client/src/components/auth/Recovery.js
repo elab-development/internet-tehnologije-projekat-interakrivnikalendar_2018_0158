@@ -1,9 +1,55 @@
-import React from 'react';
-import { Toaster } from 'react-hot-toast';
+import React, { useEffect, useState } from 'react';
+import { useNavigate } from 'react-router-dom';
+import toast, { Toaster } from 'react-hot-toast';
 
 import styles from '../../styles/Username.module.css';
+import { useAuthStore } from '../../store/store';
+import { generateOTP, verifyOTP } from '../../api/authRequests';
 
 const Recovery = () => {
+  const [otp, setOtp] = useState();
+  const navigate = useNavigate();
+  const { username } = useAuthStore((state) => state.auth);
+
+  useEffect(() => {
+    generateOTP(username)
+      .then((OTP) => {
+        if (OTP)
+          return toast.success('OTP has been sent to your email address.');
+        return toast.error('Something went wrong. Try again!');
+      })
+      .catch((error) => {
+        console.log(error);
+      });
+  }, [username]);
+
+  const onSubmit = async (e) => {
+    e.preventDefault();
+    try {
+      let { status } = await verifyOTP({ username, code: otp });
+      if (status === 201) {
+        toast.success('Account Verified!');
+        return navigate('/reset');
+      }
+    } catch (error) {
+      console.log(error);
+      return toast.error('Wrong OTP code. Try again!');
+    }
+  };
+
+  const onResend = () => {
+    let sendPromise = generateOTP(username);
+    toast.promise(sendPromise, {
+      loading: 'Creating an OTP code...',
+      success: <b>OTP has been sent to your email address.</b>,
+      error: <b>Something went wrong. Try again!</b>,
+    });
+
+    sendPromise.then((OTP) => {
+      console.log('Success' + OTP);
+    });
+  };
+
   return (
     <div className='container mx-auto'>
       <Toaster position='top-center' reverseOrder={false}></Toaster>
@@ -16,7 +62,7 @@ const Recovery = () => {
             </span>
           </div>
 
-          <form className='pt-20'>
+          <form className='pt-20' onSubmit={onSubmit}>
             <div className='textbox flex flex-col items-center gap-6'>
               <div className='input text-center'>
                 <span className='py-4 text-sm text-left text-gray-500'>
@@ -25,19 +71,26 @@ const Recovery = () => {
                 <input
                   type='text'
                   placeholder='OTP'
+                  onChange={(e) => setOtp(e.target.value)}
                   className={styles.textbox}
                 />
               </div>
 
               <button type='submit' className={styles.btn}>
-                Sign In!
+                Recover
               </button>
             </div>
 
             <div className='text-center py-4'>
               <span className='text-gray-500'>
                 Didn't receive an email?{' '}
-                <button className='text-red-500'>Resend</button>
+                <button
+                  onClick={onResend}
+                  type='button'
+                  className='text-red-500'
+                >
+                  Resend
+                </button>
               </span>
             </div>
           </form>

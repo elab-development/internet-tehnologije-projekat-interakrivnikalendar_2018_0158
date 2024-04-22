@@ -1,11 +1,21 @@
-import React from 'react';
-import { Toaster } from 'react-hot-toast';
+import React, { useEffect } from 'react';
+import { Navigate, useNavigate } from 'react-router-dom';
+import toast, { Toaster } from 'react-hot-toast';
 import { useFormik } from 'formik';
 
 import styles from '../../styles/Username.module.css';
 import { resetPasswordValidate } from '../../utils/validate';
+import { useAuthStore } from '../../store/store';
+import { useFetch } from '../../hooks/fetch.hook';
+import { restartPassword } from '../../api/authRequests';
+import Loader from '../loader';
 
 const Reset = () => {
+  const navigate = useNavigate();
+  const { username } = useAuthStore((state) => state.auth);
+  const [{ isLoading, apiData, status, serverError }] = useFetch(
+    'auth/createResetSession'
+  );
   const formik = useFormik({
     initialValues: {
       password: '',
@@ -15,9 +25,36 @@ const Reset = () => {
     validateOnBlur: false,
     validateOnChange: false,
     onSubmit: async (values) => {
-      console.log(values);
+      let resetPromise = restartPassword({
+        username,
+        password: values.password,
+      });
+
+      toast.promise(resetPromise, {
+        loading: 'Updating your Password...',
+        success: <b>Password updated Successfully!</b>,
+        error: <b>Something went wrong!</b>,
+      });
+
+      resetPromise
+        .then(() => {
+          navigate('/password');
+        })
+        .catch((error) => {
+          console.log(error);
+        });
     },
   });
+
+  useEffect(() => {
+    console.log(apiData);
+  }, [apiData]);
+
+  if (serverError)
+    return <h1 className='text-3xl text-red-500'>{serverError.message}</h1>;
+
+  if (status && status !== 201)
+    return <Navigate to={'/password'} replace={true} />;
 
   return (
     <div className='container mx-auto'>
@@ -31,25 +68,29 @@ const Reset = () => {
             </span>
           </div>
 
-          <form className='pt-20' onSubmit={formik.handleSubmit}>
-            <div className='textbox flex flex-col items-center gap-6'>
-              <input
-                type='password'
-                placeholder='New password'
-                {...formik.getFieldProps('password')}
-                className={styles.textbox}
-              />
-              <input
-                type='password'
-                placeholder='Confirm password'
-                {...formik.getFieldProps('confirm_pwd')}
-                className={styles.textbox}
-              />
-              <button type='submit' className={styles.btn}>
-                Reset Password
-              </button>
-            </div>
-          </form>
+          {isLoading ? (
+            <Loader />
+          ) : (
+            <form className='pt-20' onSubmit={formik.handleSubmit}>
+              <div className='textbox flex flex-col items-center gap-6'>
+                <input
+                  type='password'
+                  placeholder='New password'
+                  {...formik.getFieldProps('password')}
+                  className={styles.textbox}
+                />
+                <input
+                  type='password'
+                  placeholder='Confirm password'
+                  {...formik.getFieldProps('confirm_pwd')}
+                  className={styles.textbox}
+                />
+                <button type='submit' className={styles.btn}>
+                  Reset Password
+                </button>
+              </div>
+            </form>
+          )}
         </div>
       </div>
     </div>

@@ -200,15 +200,15 @@ export const register = async (req, res) => {
   
   // GET /api/auth/generateOTP
   export const generateOTP = async (req, res) => {
-    req.app.locals.OTP = otpGenerator.generate(6, {
+    const code = otpGenerator.generate(6, {
       lowerCaseAlphabets: false,
       upperCaseAlphabets: false,
       specialChars: false,
     });
   
-    res.status(201).send({
-      code: req.app.locals.OTP,
-    });
+    req.app.locals.OTP = code;
+
+    res.status(201).send({ code: code });
   };
   
   // GET /api/auth/verifyOTP
@@ -228,10 +228,9 @@ export const register = async (req, res) => {
   
   // GET /api/auth/createResetSession
   export const createResetSession = async (req, res) => {
-    if (req.app.locals.resetSession) {
-      req.app.locals.resetSession = false;
+    if (req.app.locals.resetSession) {      
       return res.status(201).send({
-        message: 'Access Granted.',
+        flag: req.app.locals.resetSession,
       });
     }
   
