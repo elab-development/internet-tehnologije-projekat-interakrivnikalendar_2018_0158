@@ -133,6 +133,14 @@ const Profile = () => {
                   </button>
                 </span>
               </div>
+              <div className='text-center'>
+                <span
+                  onClick={() => navigate('/calendar')}
+                  className='text-gray-500 cursor-pointer'
+                >
+                  Back to Calendar
+                </span>
+              </div>
             </form>
           )}
         </div>
