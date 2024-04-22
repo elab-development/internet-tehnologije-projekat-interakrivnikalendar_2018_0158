@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
-import { Link } from 'react-router-dom';
-import { Toaster } from 'react-hot-toast';
+import { useNavigate } from 'react-router-dom';
+import toast, { Toaster } from 'react-hot-toast';
 import { useFormik } from 'formik';
 
 import styles from '../../styles/Username.module.css';
@@ -8,23 +8,36 @@ import profileStyles from '../../styles/Profile.module.css';
 import avatar from '../../assets/usercalendar.png';
 import { profileValidate } from '../../utils/validate';
 import { convertToBase64 } from '../../utils/convert';
+import { useFetch } from '../../hooks/fetch.hook';
+import { updateUser } from '../../api/authRequests';
+import Loader from '../loader';
 
 const Profile = () => {
   const [file, setFile] = useState();
+  const navigate = useNavigate();
+  const [{ isLoading, apiData, serverError }] = useFetch();
 
   const formik = useFormik({
     initialValues: {
-      firstName: '',
-      lastName: '',
-      username: '',
-      email: '',
+      firstName: apiData?.firstName || '',
+      lastName: apiData?.lastName || '',
+      username: apiData?.username || '',
+      email: apiData?.email || '',
     },
+    enableReinitialize: true,
     validate: profileValidate,
     validateOnBlur: false,
     validateOnChange: false,
     onSubmit: async (values) => {
-      values = await Object.assign(values, { profile: file || '' });
-      console.log(values);
+      values = Object.assign(values, {
+        profile: file || apiData?.profile || '',
+      });
+      let updatePromise = updateUser(values);
+      toast.promise(updatePromise, {
+        loading: 'Updating profile information...',
+        success: <b>Updated profile information!</b>,
+        error: <b>Something went wrong!</b>,
+      });
     },
   });
 
@@ -32,6 +45,14 @@ const Profile = () => {
     const base64 = await convertToBase64(e.target.files[0]);
     setFile(base64);
   };
+
+  const onLogout = () => {
+    localStorage.removeItem('token');
+    navigate('/');
+  };
+
+  if (serverError)
+    return <h1 className='text-3xl text-red-500'>{serverError.message}</h1>;
 
   return (
     <div className='container mx-auto'>
@@ -48,65 +69,72 @@ const Profile = () => {
             </span>
           </div>
 
-          <form className='py-1' onSubmit={formik.handleSubmit}>
-            <div className='profile flex justify-center py-4'>
-              <label htmlFor='profile'>
-                <img
-                  src={file || avatar}
-                  alt='avatar'
-                  className={`${styles.profile_img} ${profileStyles.profile_img}`}
-                />
-              </label>
-              <input
-                type='file'
-                id='profile'
-                name='profile'
-                onChange={onUpload}
-              />
-            </div>
-
-            <div className='textbox flex flex-col items-center gap-6'>
-              <div className='name flex w-3/4 gap-10'>
+          {isLoading ? (
+            <Loader />
+          ) : (
+            <form className='py-1' onSubmit={formik.handleSubmit}>
+              <div className='profile flex justify-center py-4'>
+                <label htmlFor='profile'>
+                  <img
+                    src={file || apiData?.profile || avatar}
+                    alt='avatar'
+                    className={`${styles.profile_img} ${profileStyles.profile_img}`}
+                  />
+                </label>
                 <input
-                  type='text'
-                  placeholder='First Name'
-                  {...formik.getFieldProps('firstName')}
-                  className={`${styles.textbox} ${profileStyles.textbox}`}
-                />
-                <input
-                  type='text'
-                  placeholder='Last Name'
-                  {...formik.getFieldProps('lastName')}
-                  className={`${styles.textbox} ${profileStyles.textbox}`}
+                  type='file'
+                  id='profile'
+                  name='profile'
+                  onChange={onUpload}
                 />
               </div>
-              <input
-                type='text'
-                placeholder='Email'
-                {...formik.getFieldProps('email')}
-                className={`${styles.textbox} ${profileStyles.textbox}`}
-              />
-              <input
-                type='text'
-                placeholder='Username'
-                {...formik.getFieldProps('username')}
-                className={`${styles.textbox} ${profileStyles.textbox}`}
-              />
 
-              <button type='submit' className={styles.btn}>
-                Update Details!
-              </button>
-            </div>
+              <div className='textbox flex flex-col items-center gap-6'>
+                <div className='name flex w-3/4 gap-10'>
+                  <input
+                    type='text'
+                    placeholder='First Name'
+                    {...formik.getFieldProps('firstName')}
+                    className={`${styles.textbox} ${profileStyles.textbox}`}
+                  />
+                  <input
+                    type='text'
+                    placeholder='Last Name'
+                    {...formik.getFieldProps('lastName')}
+                    className={`${styles.textbox} ${profileStyles.textbox}`}
+                  />
+                </div>
+                <input
+                  type='text'
+                  placeholder='Email'
+                  disabled
+                  {...formik.getFieldProps('email')}
+                  className={`${styles.textbox} ${profileStyles.textbox}`}
+                />
+                <input
+                  type='text'
+                  placeholder='Username'
+                  disabled
+                  {...formik.getFieldProps('username')}
+                  className={`${styles.textbox} ${profileStyles.textbox}`}
+                />
 
-            <div className='text-center py-4'>
-              <span className='text-gray-500'>
-                That's it for now?{' '}
-                <Link to='/' className='text-red-500'>
-                  Logout
-                </Link>
-              </span>
-            </div>
-          </form>
+                <button type='submit' className={styles.btn}>
+                  Update Details!
+                </button>
+              </div>
+
+
+              <div className='text-center py-4'>
+                <span className='text-gray-500'>
+                  That's it for now?{' '}
+                  <button onClick={onLogout} className='text-red-500'>
+                    Logout
+                  </button>
+                </span>
+              </div>
+            </form>
+          )}
         </div>
       </div>
     </div>

@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react';
 import axios from 'axios';
+import { getUsername } from '../utils/helpers';
 
 axios.defaults.baseURL = 'http://localhost:8000';
 
@@ -12,12 +13,14 @@ export const useFetch = (query) => {
   });
 
   useEffect(() => {
-    if (!query) return;
-
+    
     const fetchData = async () => {
       try {
         setFetchData((prev) => ({ ...prev, isLoading: true }));
-        const { data, status } = await axios.get(`/api/${query}`);
+        const { username } = !query ? await getUsername() : '';
+        const { data, status } = !query
+          ? await axios.get(`/api/auth/user/${username}`)
+          : await axios.get(`/api/${query}`);
 
         if (status === 200 || status === 201) {
           setFetchData((prev) => ({

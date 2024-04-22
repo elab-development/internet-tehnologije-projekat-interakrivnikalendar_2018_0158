@@ -1,7 +1,8 @@
 import React from 'react';
-import { BrowserRouter, Routes, Route } from 'react-router-dom';
+import { createBrowserRouter, RouterProvider } from 'react-router-dom';
+import { AuthorizeUser, ProtectedRoute } from './utils/authProtector';
+
 import Home from './pages/Home';
-import Login from './pages/Login';
 import Register from './pages/Register';
 import Username from './components/auth/Username';
 import Password from './components/auth/Password';
@@ -10,21 +11,57 @@ import Reset from './components/auth/Reset';
 import Profile from './components/auth/Profile';
 import Calendar from './pages/Calendar';
 
+const router = createBrowserRouter([
+  {
+    path: '/',
+    element: <Home />,
+  },
+  {
+    path: '/username',
+    element: <Username />,
+  },
+  {
+    path: '/register',
+    element: <Register />,
+  },
+  {
+    path: '/password',
+    element: (
+      <ProtectedRoute>
+        <Password />
+      </ProtectedRoute>
+    ),
+  },
+  {
+    path: '/profile',
+    element: (
+      <AuthorizeUser>
+        <Profile />
+      </AuthorizeUser>
+    ),
+  },
+  {
+    path: '/recovery',
+    element: <Recovery />,
+  },
+  {
+    path: '/reset',
+    element: <Reset />,
+  },
+  {
+    path: '/calendar',
+    element: (
+      <AuthorizeUser>
+        <Calendar />
+      </AuthorizeUser>
+    ),
+  },
+]);
+
 const App = () => {
   return (
     <main>
-      <BrowserRouter>
-        <Routes>
-          <Route path='/' element={<Home />} />
-          <Route path='/username' element={<Username />} />
-          <Route path='/password' element={<Password />} />
-          <Route path='/recovery' element={<Recovery />} />
-          <Route path='/reset' element={<Reset />} />
-          <Route path='/register' element={<Register />} />
-          <Route path='/profile' element={<Profile />} />
-          <Route path='/calendar' element={<Calendar />} />
-        </Routes>
-      </BrowserRouter>
+      <RouterProvider router={router}></RouterProvider>
     </main>
   );
 };
