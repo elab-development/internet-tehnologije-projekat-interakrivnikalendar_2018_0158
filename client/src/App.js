@@ -1,6 +1,7 @@
 import React from 'react';
 import { createBrowserRouter, RouterProvider } from 'react-router-dom';
 import { AuthorizeUser, ProtectedRoute } from './utils/authProtector';
+import ContextWrapper from './context/ContextWrapper';
 
 import Home from './pages/Home';
 import Register from './pages/Register';
@@ -52,7 +53,9 @@ const router = createBrowserRouter([
     path: '/calendar',
     element: (
       <AuthorizeUser>
-        <Calendar />
+        <ContextWrapper>
+          <Calendar />
+        </ContextWrapper>
       </AuthorizeUser>
     ),
   },
