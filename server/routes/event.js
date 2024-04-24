@@ -13,4 +13,7 @@ router.route('/:id').get(eventController.getEvent);
 // PUT Endpoints
 router.route('/:id').put(eventController.updateEvent);
 
+// DELETE Endpoints
+router.route('/:id').delete(eventController.deleteEvent);
+
 export default router;

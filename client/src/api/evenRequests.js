@@ -55,3 +55,14 @@ export const updateEvent = async (id, updateData) => {
     return Promise.reject({ error: 'Could not update the event.' });
   }
 };
+
+// Delete Event
+export const deleteEvent = async (id) => {
+  try {
+    const data = await axios.delete(`/api/events/${id}`);
+
+    return Promise.resolve({ data });
+  } catch (error) {
+    return Promise.reject({ error: 'Could not delete the event.' });
+  }
+};

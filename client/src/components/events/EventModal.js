@@ -2,18 +2,29 @@ import React, { useContext, useState } from 'react';
 import toast, { Toaster } from 'react-hot-toast';
 
 import GlobalContext from '../../context/GlobalContext';
-import { createEvent } from '../../api/eventRequests';
+import { createEvent, deleteEvent, updateEvent } from '../../api/eventRequests';
 import { useFetch } from '../../hooks/fetch.hook';
 import Loader from '../Loader';
 
 const EventModal = () => {
-  const [title, setTitle] = useState('');
-  const [description, setDescription] = useState('');
-  const [location, setLocation] = useState('');
-  const [selectedCategory, setSelectedCategory] = useState('party');
+  const {
+    setShowEventModal,
+    daySelected,
+    categories,
+    setSelectedEvent,
+    selectedEvent,
+  } = useContext(GlobalContext);
 
-  const { setShowEventModal, daySelected, categories } =
-    useContext(GlobalContext);
+  const [title, setTitle] = useState(selectedEvent?.title || '');
+  const [description, setDescription] = useState(
+    selectedEvent?.description || ''
+  );
+  const [location, setLocation] = useState(selectedEvent?.location || '');
+  const [selectedCategory, setSelectedCategory] = useState(
+    selectedEvent?.category || 'business'
+  );
+
+  
   const [{ isLoading, apiData, serverError }] = useFetch();
 
   const handleSubmit = async (e) => {
@@ -48,6 +59,53 @@ const EventModal = () => {
       });
   };
 
+  const handleUpdate = () => {
+    let eventData = {
+      title: title,
+      description: description,
+      location: location,
+      category: selectedCategory,
+    };
+
+    let updatePromise = updateEvent(selectedEvent._id, eventData);
+
+    toast.promise(updatePromise, {
+      loading: 'Updating Event...',
+      success: <b>Updated Successfully!</b>,
+      error: <b>Something went wrong!</b>,
+    });
+    updatePromise
+      .then(() => {
+        setTimeout(() => {
+          setShowEventModal(false);
+          setSelectedEvent(null);
+        }, 2000);
+      })
+      .catch((error) => {
+        console.log(error);
+      });
+  };
+
+  const handleDelete = () => {
+    let deletePromise = deleteEvent(selectedEvent._id);
+
+    toast.promise(deletePromise, {
+      loading: 'Deleting Event...',
+      success: <b>Deleted Successfully!</b>,
+      error: <b>Something went wrong!</b>,
+    });
+    deletePromise
+      .then(() => {
+        setTimeout(() => {
+          setShowEventModal(false);
+          setSelectedEvent(null);
+        }, 1000);
+      })
+      .catch((error) => {
+        console.log(error);
+      });
+  };
+
   if (serverError) return <h1>{serverError}</h1>;
 
   return (
@@ -64,7 +122,13 @@ const EventModal = () => {
             <span className='material-icons-outlined text-gray-500'>
               drag_handle
             </span>
-            <button type='button' onClick={() => setShowEventModal(false)}>
+            <button
+              type='button'
+              onClick={() => {
+                setShowEventModal(false);
+                setSelectedEvent(null);
+              }}
+            >
               <span className='material-icons-outlined text-red-500'>
                 close
               </span>
@@ -132,12 +196,31 @@ const EventModal = () => {
             </div>
           </div>
           <footer className='flex justify-end w-100 border-t p-3 mt-5'>
-            <button
-              type='submit'
-              className='bg-indigo-600 px-6 py-2 rounded text-white hover:bg-indigo-200'
-            >
-              Create
-            </button>
+          {selectedEvent ? (
+              <>
+                <button
+                  onClick={handleUpdate}
+                  type='button'
+                  className='bg-indigo-600 px-6 py-2 rounded text-white hover:bg-indigo-200'
+                >
+                  Update
+                </button>
+                <button
+                  onClick={handleDelete}
+                  type='button'
+                  className='bg-red-600 ml-2 px-4 py-2 rounded text-white hover:bg-red-200'
+                >
+                  <span className='material-icons-outlined mt-2'>delete</span>
+                </button>
+              </>
+            ) : (
+              <button
+                type='submit'
+                className='bg-indigo-600 px-6 py-2 rounded text-white hover:bg-indigo-200'
+              >
+                Create
+              </button>
+            )}
           </footer>
         </form>
       )}
