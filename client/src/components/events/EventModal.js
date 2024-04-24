@@ -1,8 +1,7 @@
-import React, { useContext, useEffect, useState } from 'react';
+import React, { useContext, useState } from 'react';
 import toast, { Toaster } from 'react-hot-toast';
 
 import GlobalContext from '../../context/GlobalContext';
-import { categories } from '../../utils/calendarUtils';
 import { createEvent } from '../../api/eventRequests';
 import { useFetch } from '../../hooks/fetch.hook';
 import Loader from '../Loader';
@@ -13,7 +12,8 @@ const EventModal = () => {
   const [location, setLocation] = useState('');
   const [selectedCategory, setSelectedCategory] = useState('party');
 
-  const { setShowEventModal, daySelected } = useContext(GlobalContext);
+  const { setShowEventModal, daySelected, categories } =
+    useContext(GlobalContext);
   const [{ isLoading, apiData, serverError }] = useFetch();
 
   const handleSubmit = async (e) => {
@@ -116,15 +116,15 @@ const EventModal = () => {
                 {categories.map((cat, i) => (
                   <span
                     key={i}
-                    onClick={() => setSelectedCategory(cat.category)}
+                    onClick={() => setSelectedCategory(cat.name)}
                     className={`${
-                      selectedCategory === cat.category
-                        ? `bg-${cat.background}-600`
+                      selectedCategory === cat.name
+                        ? cat.bgClass
                         : 'bg-gray-500'
                     }  w-6 h-6 rounded-full flex items-center justify-center cursor-pointer mb-2`}
                   >
                     <span className='material-icons-outlined text-white text-sm'>
-                      {cat.icon}
+                    {cat.iconTag}
                     </span>
                   </span>
                 ))}

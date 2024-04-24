@@ -14,7 +14,8 @@ const Day = ({ day, rowIdx }) => {
       : '';
   };
 
-  const { setDaySelected, setShowEventModal } = useContext(GlobalContext);
+  const { setDaySelected, setShowEventModal, categories } =
+    useContext(GlobalContext);
   
   const [{ isLoading, apiData, serverError }] = useFetch();
 
@@ -25,10 +26,14 @@ const Day = ({ day, rowIdx }) => {
       date: date.toLocaleDateString(),
     });
 
-    eventsPromise.then((data) => {
-      setDayEvents(data);
-    });
-  }, [apiData]);
+    eventsPromise
+      .then((data) => {
+        setDayEvents(data);
+      })
+      .catch((error) => {
+        console.log(error);
+      });
+  }, [apiData, day]);
 
   if (serverError) return <h2>{serverError}</h2>;
 
@@ -54,11 +59,23 @@ const Day = ({ day, rowIdx }) => {
         ) : (
           <div>
             {dayEvents.map((dayEvent, i) => (
-              <>
-                <div key={i}>{dayEvent.title}</div>
-                <div key={i}>{dayEvent.description}</div>
-                <div key={i}>{dayEvent.category}</div>
-              </>
+              <div
+              key={i}
+              className={`${
+                categories.filter(
+                  (categ) => categ.name === dayEvent.category
+                )[0].bgClass
+              } text-white rounded p-1 text-sm mb-1 truncate hover:bg-opacity-50`}
+            >
+              <span className='material-icons-outlined text-sm mt-1 mx-1'>
+                {
+                  categories.filter(
+                    (categ) => categ.name === dayEvent.category
+                  )[0].iconTag
+                }
+              </span>
+              {dayEvent.title}
+            </div>
             ))}
           </div>
         )}

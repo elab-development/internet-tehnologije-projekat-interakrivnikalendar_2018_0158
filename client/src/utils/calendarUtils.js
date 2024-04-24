@@ -14,10 +14,3 @@ export const getMonth = (month = dayjs().month()) => {
 
   return daysMatrix;
 };
-
-export const categories = [
-  { background: 'indigo', icon: 'celebration', category: 'party' },
-  { background: 'indigo', icon: 'flight', category: 'travel' },
-  { background: 'indigo', icon: 'local_bar', category: 'nightout' },
-  { background: 'indigo', icon: 'business_center', category: 'business' },
-];

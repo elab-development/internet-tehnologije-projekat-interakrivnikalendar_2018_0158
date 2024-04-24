@@ -1,19 +1,37 @@
 import React, { useEffect, useState } from 'react';
+import dayjs from 'dayjs';
 
 import GlobalContext from './GlobalContext';
-import dayjs from 'dayjs';
+import { getCategories } from '../api/categoryRequests';
 
 const ContextWrapper = (props) => {
   const [monthIndex, setMonthIndex] = useState(dayjs().month());
   const [smallCalendarMonth, setSmallCalendarMonth] = useState(null);
   const [daySelected, setDaySelected] = useState(dayjs());
   const [showEventModal, setShowEventModal] = useState(false);
+  const [categories, setCategories] = useState([]);
 
   useEffect(() => {
     if (smallCalendarMonth !== null) {
       setMonthIndex(smallCalendarMonth);
     }
   }, [smallCalendarMonth]);
+
+  useEffect(() => {
+    const fetchCategories = async () => {
+      const categoriesPromise = getCategories();
+
+      categoriesPromise
+        .then((data) => {
+          setCategories(data);
+        })
+        .catch((error) => {
+          console.log(error);
+        });
+    };
+
+    fetchCategories();
+  }, []);
 
   return (
     <GlobalContext.Provider
@@ -26,6 +44,8 @@ const ContextWrapper = (props) => {
         setDaySelected,
         showEventModal,
         setShowEventModal,
+        categories,
+        setCategories,
       }}
     >
       {props.children}
