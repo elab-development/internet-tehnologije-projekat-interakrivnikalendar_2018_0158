@@ -3,6 +3,7 @@ import cors from 'cors';
 import morgan from 'morgan';
 import connect from './database/conn.js';
 import authRouter from './routes/auth.js';
+import eventRouter from './routes/event.js';
 
 const app = express();
 
@@ -18,6 +19,7 @@ app.get('/', (req, res) => {
 });
 
 app.use('/api/auth', authRouter);
+app.use('/api/events', eventRouter);
 
 connect()
   .then(() => {
