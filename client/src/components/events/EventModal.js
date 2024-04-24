@@ -5,6 +5,7 @@ import GlobalContext from '../../context/GlobalContext';
 import { createEvent, deleteEvent, updateEvent } from '../../api/eventRequests';
 import { useFetch } from '../../hooks/fetch.hook';
 import Loader from '../Loader';
+import InviteModal from '../invites/InviteModal';
 
 const EventModal = () => {
   const {
@@ -16,6 +17,7 @@ const EventModal = () => {
   } = useContext(GlobalContext);
 
   const [title, setTitle] = useState(selectedEvent?.title || '');
+  const [showInviteModal, setShowInviteModal] = useState(false);
   const [description, setDescription] = useState(
     selectedEvent?.description || ''
   );
@@ -199,9 +201,16 @@ const EventModal = () => {
           {selectedEvent ? (
               <>
                 <button
-                  onClick={handleUpdate}
+                  onClick={() => setShowInviteModal(true)}
                   type='button'
                   className='bg-indigo-600 px-6 py-2 rounded text-white hover:bg-indigo-200'
+                  >
+                  Invite
+                </button>
+                <button
+                  onClick={handleUpdate}
+                  type='button'
+                  className='bg-indigo-600 ml-2 px-6 py-2 rounded text-white hover:bg-indigo-200'
                 >
                   Update
                 </button>
@@ -223,6 +232,9 @@ const EventModal = () => {
             )}
           </footer>
         </form>
+      )}
+      {showInviteModal && (
+        <InviteModal setShowInviteModal={setShowInviteModal} />
       )}
     </div>
   );

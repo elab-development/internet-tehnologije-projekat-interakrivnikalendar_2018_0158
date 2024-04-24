@@ -13,6 +13,8 @@ const GlobalContext = React.createContext({
   setCategories: () => {},
   selectedEvent: null,
   setSelectedEvent: () => {},
+  allUsers: [],
+  setAllUsers: () => {},
 });
 
 export default GlobalContext;

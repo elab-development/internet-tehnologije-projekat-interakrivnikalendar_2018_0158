@@ -3,6 +3,7 @@ import dayjs from 'dayjs';
 
 import GlobalContext from './GlobalContext';
 import { getCategories } from '../api/categoryRequests';
+import { getUsers } from '../api/authRequests';
 
 const ContextWrapper = (props) => {
   const [monthIndex, setMonthIndex] = useState(dayjs().month());
@@ -11,6 +12,7 @@ const ContextWrapper = (props) => {
   const [showEventModal, setShowEventModal] = useState(false);
   const [categories, setCategories] = useState([]);
   const [selectedEvent, setSelectedEvent] = useState(null);
+  const [allUsers, setAllUsers] = useState([]);
 
   useEffect(() => {
     if (smallCalendarMonth !== null) {
@@ -31,7 +33,20 @@ const ContextWrapper = (props) => {
         });
     };
 
+    const fetchUsers = async () => {
+      const usersPromises = getUsers();
+
+      usersPromises
+        .then((users) => {
+          setAllUsers(users.data);
+        })
+        .catch((error) => {
+          console.log(error);
+        });
+    };
+
     fetchCategories();
+    fetchUsers();
   }, []);
 
   return (
@@ -49,6 +64,8 @@ const ContextWrapper = (props) => {
         setCategories,
         selectedEvent,
         setSelectedEvent,
+        allUsers,
+        setAllUsers,
       }}
     >
       {props.children}

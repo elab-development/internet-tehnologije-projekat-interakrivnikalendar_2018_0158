@@ -13,6 +13,7 @@ router
 router.route('/login').post(authMiddleware.verifyUser, authController.login);
 
 // GET Endpoints
+router.route('/user').get(authController.getUsers);
 router.route('/user/:username').get(authController.getUser);
 router
   .route('/generateOTP')

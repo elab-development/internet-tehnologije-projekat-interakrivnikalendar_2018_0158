@@ -130,6 +130,31 @@ export const register = async (req, res) => {
       });
     }
   };
+
+  // GET /api/auth/user
+export const getUsers = async (req, res) => {
+  try {
+    User.find((err, users) => {
+      if (err) {
+        return res.status(500).send({
+          error: 'Something went wrong while fetching users: ' + err,
+        });
+      }
+
+      if (!users) {
+        return res.status(501).send({
+          error: 'Could not find users',
+        });
+      }
+
+      return res.status(200).send(users);
+    });
+  } catch (error) {
+    return res.status(404).send({
+      error: 'Users not found: ' + error,
+    });
+  }
+};
   
   // GET /api/auth/user/:username
   export const getUser = async (req, res) => {

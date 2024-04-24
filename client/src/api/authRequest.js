@@ -13,6 +13,16 @@ export const authenticate = async (username) => {
   }
 };
 
+// Get All Users
+export const getUsers = async () => {
+  try {
+    const { data } = await axios.get('/api/auth/user');
+    return { data };
+  } catch (error) {
+    return { error: 'No users found!' };
+  }
+};
+
 // Get User Details
 export const getUser = async ({ username }) => {
   try {
