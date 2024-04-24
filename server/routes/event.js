@@ -8,5 +8,9 @@ router.route('/').post(eventController.createEvent);
 
 // GET Endpoints
 router.route('/').get(eventController.getEvents);
+router.route('/:id').get(eventController.getEvent);
+
+// PUT Endpoints
+router.route('/:id').put(eventController.updateEvent);
 
 export default router;

@@ -14,8 +14,13 @@ const Day = ({ day, rowIdx }) => {
       : '';
   };
 
-  const { setDaySelected, setShowEventModal, categories } =
-    useContext(GlobalContext);
+  const {
+    setDaySelected,
+    setShowEventModal,
+    categories,
+    showEventModal,
+    setSelectedEvent,
+  } = useContext(GlobalContext);
   
   const [{ isLoading, apiData, serverError }] = useFetch();
 
@@ -33,7 +38,7 @@ const Day = ({ day, rowIdx }) => {
       .catch((error) => {
         console.log(error);
       });
-  }, [apiData, day]);
+    }, [apiData, day, showEventModal]);
 
   if (serverError) return <h2>{serverError}</h2>;
 
@@ -61,6 +66,7 @@ const Day = ({ day, rowIdx }) => {
             {dayEvents.map((dayEvent, i) => (
               <div
               key={i}
+              onClick={() => setSelectedEvent(dayEvent)}
               className={`${
                 categories.filter(
                   (categ) => categ.name === dayEvent.category

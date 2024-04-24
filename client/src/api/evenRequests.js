@@ -31,3 +31,27 @@ export const getEvents = async (query) => {
     return Promise.reject({ error });
   }
 };
+
+// Get Event
+export const getEvent = async (id) => {
+  try {
+    const { data, status } = await axios.get(`/api/events/${id}`);
+
+    if (status === 200) {
+      return data;
+    }
+  } catch (error) {
+    return Promise.reject({ error });
+  }
+};
+
+// Update Event
+export const updateEvent = async (id, updateData) => {
+  try {
+    const data = await axios.put(`/api/events/${id}`, updateData);
+
+    return Promise.resolve({ data });
+  } catch (error) {
+    return Promise.reject({ error: 'Could not update the event.' });
+  }
+};

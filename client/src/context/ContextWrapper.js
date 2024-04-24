@@ -10,6 +10,7 @@ const ContextWrapper = (props) => {
   const [daySelected, setDaySelected] = useState(dayjs());
   const [showEventModal, setShowEventModal] = useState(false);
   const [categories, setCategories] = useState([]);
+  const [selectedEvent, setSelectedEvent] = useState(null);
 
   useEffect(() => {
     if (smallCalendarMonth !== null) {
@@ -46,6 +47,8 @@ const ContextWrapper = (props) => {
         setShowEventModal,
         categories,
         setCategories,
+        selectedEvent,
+        setSelectedEvent,
       }}
     >
       {props.children}
