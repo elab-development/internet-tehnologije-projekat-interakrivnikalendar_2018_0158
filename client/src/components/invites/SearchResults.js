@@ -16,7 +16,7 @@ const SearchResults = ({ results, setShowInviteModal }) => {
       from: apiData._id,
       to: user._id,
       event: selectedEvent._id,
-      answer: 'norsvp',
+      answer: 'notanswered',
       toMail: user.email,
       toUsername: user.username,
       fromUsername: apiData.username,

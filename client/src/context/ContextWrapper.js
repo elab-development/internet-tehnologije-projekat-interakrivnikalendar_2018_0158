@@ -5,7 +5,6 @@ import dayjs from 'dayjs';
 import GlobalContext from './GlobalContext';
 import { getCategories } from '../api/categoryRequests';
 import { getUsers } from '../api/authRequests';
-import { useFetch } from '../hooks/fetch.hook';
 import { getUsername } from '../utils/helpers';
 
 const ContextWrapper = (props) => {

@@ -1,11 +1,8 @@
 import React from 'react';
-import toast, { Toaster } from 'react-hot-toast';
-import { updateInvite } from '../../api/inviteRequests';
 
 const SentTableAnswer = ({ row }) => {
   return (
     <>
-      <Toaster position='top-center' reverseOrder={false}></Toaster>
       {row.answer === 'notanswered' && (
         <p className='text-gray-400'>Waiting...</p>
       )}

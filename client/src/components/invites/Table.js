@@ -21,7 +21,7 @@ const Table = ({ tableData, setChangeFlag, changeFlag }) => {
       cell: (info) => <span>{info.row.index + 1}</span>,
       header: '#',
     }),
-    columnHelper.accessor((row) => row.to.profile, {
+    columnHelper.accessor((row) => row.from.profile, {
       id: 'profile',
       cell: (info) => (
         <img
@@ -32,12 +32,12 @@ const Table = ({ tableData, setChangeFlag, changeFlag }) => {
       ),
       header: 'user',
     }),
-    columnHelper.accessor((row) => row.to.username, {
+    columnHelper.accessor((row) => row.from.username, {
       id: 'username',
       cell: (info) => <p className='font-bold'>{info.getValue()}</p>,
       header: '',
     }),
-    columnHelper.accessor((row) => row.to.email, {
+    columnHelper.accessor((row) => row.from.email, {
       id: 'email',
       cell: (info) => <p>{info.getValue()}</p>,
       header: '',

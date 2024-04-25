@@ -17,7 +17,6 @@ const EventModal = () => {
   } = useContext(GlobalContext);
 
   const [title, setTitle] = useState(selectedEvent?.title || '');
-  const [showInviteModal, setShowInviteModal] = useState(false);
   const [description, setDescription] = useState(
     selectedEvent?.description || ''
   );
@@ -25,7 +24,7 @@ const EventModal = () => {
   const [selectedCategory, setSelectedCategory] = useState(
     selectedEvent?.category || 'business'
   );
-
+  const [showInviteModal, setShowInviteModal] = useState(false);
   
   const [{ isLoading, apiData, serverError }] = useFetch();
 

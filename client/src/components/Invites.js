@@ -37,11 +37,7 @@ const Invites = ({ type }) => {
               changeFlag={changeFlag}
             />
           ) : (
-            <SentInvitesTable
-              tableData={invites}
-              setChangeFlag={setChangeFlag}
-              changeFlag={changeFlag}
-            />
+            <SentInvitesTable tableData={invites} />
           )}
         </>
       )}
