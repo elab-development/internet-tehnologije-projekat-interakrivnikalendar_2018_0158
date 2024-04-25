@@ -7,12 +7,14 @@ import Sidebar from '../components/Sidebar';
 import Month from '../components/Month';
 import Invites from '../components/Invites';
 import EventModal from '../components/events/EventModal';
+import PublicEventModal from '../components/events/PublicEventModal';
 
 const Calendar = () => {
   const [currentMonth, setCurrentMonth] = useState(getMonth());
   const [view, setView] = useState('month');
   
-  const { monthIndex, showEventModal } = useContext(GlobalContext);
+  const { monthIndex, showEventModal, showPublicEventModal } =
+    useContext(GlobalContext);
 
   useEffect(() => {
     setCurrentMonth(getMonth(monthIndex));
@@ -30,6 +32,7 @@ const Calendar = () => {
         </div>
       </div>
       {showEventModal && <EventModal />}
+      {showPublicEventModal && <PublicEventModal />}
     </>
   );
 };

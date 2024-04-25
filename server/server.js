@@ -6,6 +6,7 @@ import authRouter from './routes/auth.js';
 import eventRouter from './routes/event.js';
 import categoryRouter from './routes/category.js';
 import inviteRouter from './routes/invite.js';
+import publicEventRouter from './routes/publicEvent.js';
 
 const app = express();
 
@@ -24,6 +25,7 @@ app.use('/api/auth', authRouter);
 app.use('/api/events', eventRouter);
 app.use('/api/categories', categoryRouter);
 app.use('/api/invites', inviteRouter);
+app.use('/api/publicEvents', publicEventRouter);
 
 connect()
   .then(() => {

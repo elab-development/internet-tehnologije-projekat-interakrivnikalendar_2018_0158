@@ -3,11 +3,14 @@ import dayjs from 'dayjs';
 
 import GlobalContext from '../context/GlobalContext';
 import { getEvents } from '../api/eventRequests';
+import { getPublicEvents } from '../api/publicEventRequests';
 import { useFetch } from '../hooks/fetch.hook';
 import Loader from './Loader';
 
 const Day = ({ day, rowIdx }) => {
   const [dayEvents, setDayEvents] = useState([]);
+  const [dayPublicEvents, setDayPublicEvents] = useState([]);
+  
   const getCurrentDayClass = () => {
     return day.format('DD-MM-YY') === dayjs().format('DD-MM-YY')
       ? 'bg-indigo-600 text-white rounded-full w-7'
@@ -39,6 +42,24 @@ const Day = ({ day, rowIdx }) => {
         console.log(error);
       });
     }, [apiData, day, showEventModal]);
+    useEffect(() => {
+      var date = new Date(day);
+  
+      const eventsPromise = getPublicEvents({
+        date: date.toLocaleDateString('en-US', {
+          day: 'numeric',
+          month: 'numeric',
+        }),
+      });
+  
+      eventsPromise
+        .then((data) => {
+          setDayPublicEvents(data);
+        })
+        .catch((error) => {
+          console.log(error);
+        });
+    }, [apiData, day]);
 
   if (serverError) return <h2>{serverError}</h2>;
 
@@ -52,6 +73,14 @@ const Day = ({ day, rowIdx }) => {
           {day.format('DD')}
         </p>
       </header>
+      {dayPublicEvents.map((publicEvent, i) => (
+        <div
+          key={i}
+          className={`bg-green-500 text-white rounded p-1 text-sm mb-1 truncate hover:bg-opacity-50`}
+        >
+          {publicEvent.title}
+        </div>
+      ))}
       <div
         className='flex-1 cursor-pointer'
         onClick={() => {

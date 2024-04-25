@@ -12,6 +12,7 @@ const ContextWrapper = (props) => {
   const [smallCalendarMonth, setSmallCalendarMonth] = useState(null);
   const [daySelected, setDaySelected] = useState(dayjs());
   const [showEventModal, setShowEventModal] = useState(false);
+  const [showPublicEventModal, setShowPublicEventModal] = useState(false);
   const [categories, setCategories] = useState([]);
   const [selectedEvent, setSelectedEvent] = useState(null);
   const [allUsers, setAllUsers] = useState([]);
@@ -52,7 +53,6 @@ const ContextWrapper = (props) => {
       const { username } = await getUsername();
       const { data } = await axios.get(`/api/auth/user/${username}`);
       setLoggedInUserData(data);
-      console.log(data);
     };
 
     fetchCategories();
@@ -71,6 +71,8 @@ const ContextWrapper = (props) => {
         setDaySelected,
         showEventModal,
         setShowEventModal,
+        showPublicEventModal,
+        setShowPublicEventModal,
         categories,
         setCategories,
         selectedEvent,
