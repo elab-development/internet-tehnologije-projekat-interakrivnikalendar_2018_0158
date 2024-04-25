@@ -5,6 +5,7 @@ import connect from './database/conn.js';
 import authRouter from './routes/auth.js';
 import eventRouter from './routes/event.js';
 import categoryRouter from './routes/category.js';
+import inviteRouter from './routes/invite.js';
 
 const app = express();
 
@@ -22,6 +23,7 @@ app.get('/', (req, res) => {
 app.use('/api/auth', authRouter);
 app.use('/api/events', eventRouter);
 app.use('/api/categories', categoryRouter);
+app.use('/api/invites', inviteRouter);
 
 connect()
   .then(() => {

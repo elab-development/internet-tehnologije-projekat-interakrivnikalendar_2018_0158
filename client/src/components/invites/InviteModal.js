@@ -24,7 +24,10 @@ const InviteModal = ({ setShowInviteModal }) => {
         </header>
         <div className='w-full'>
           <SearchBar setResults={setResults} />
-          <SearchResults results={results} />
+          <SearchResults
+            results={results}
+            setShowInviteModal={setShowInviteModal}
+          />
         </div>
       </div>
     </div>

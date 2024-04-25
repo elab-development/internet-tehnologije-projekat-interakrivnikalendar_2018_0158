@@ -15,7 +15,10 @@ const InviteSchema = new mongoose.Schema({
   },
   rsvp: {
     type: Boolean,
-    required: true,
+    default: false,
+  },
+  answer: {
+    type: String,
   },
 });
 
