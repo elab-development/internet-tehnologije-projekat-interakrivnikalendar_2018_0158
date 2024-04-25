@@ -1,4 +1,5 @@
 import Invite from '../models/Invite.model.js';
+import { Types } from 'mongoose';
 
 // POST /api/invites
 export const createInvite = async (req, res) => {
@@ -37,7 +38,7 @@ export const getInvites = async (req, res) => {
 
   try {
     if (type === 'my') {
-      Invite.find({ to: id }, (err, invites) => {
+      Invite.find({ to: Types.ObjectId(id) }, (err, invites) => {
         if (err) {
           return res.status(500).send({
             error: 'Something went wrong while fetching the invites: ' + err,
@@ -53,7 +54,7 @@ export const getInvites = async (req, res) => {
         return res.status(200).send(invites);
       });
     } else if (type === 'sent') {
-      Invite.find({ from: id }, (err, invites) => {
+      Invite.find({ from: Types.ObjectId(id) }, (err, invites) => {
         if (err) {
           return res.status(500).send({
             error: 'Something went wrong while fetching the invites: ' + err,
@@ -79,6 +80,40 @@ export const getInvites = async (req, res) => {
     });
   }
 };
+
+// GET /api/invites/populated
+export const getSentInvitesPopulated = async (req, res) => {
+  const { id, type } = req.query;
+
+  try {
+    if (type === 'my') {
+      const invites = await Invite.find({ to: Types.ObjectId(id) })
+        .populate('to')
+        .populate('from')
+        .populate('event')
+        .exec();
+
+      return res.status(200).send(invites);
+    } else if (type === 'sent') {
+      const invites = await Invite.find({ from: Types.ObjectId(id) })
+        .populate('to')
+        .populate('from')
+        .populate('event')
+        .exec();
+
+      return res.status(200).send(invites);
+    } else {
+      return res.status(500).send({
+        error: 'Wrong type sent!',
+      });
+    }
+  } catch (error) {
+    return res.status(500).send({
+      error: 'Something went wrong while fetching the invites: ' + error,
+    });
+  }
+};
+
 
 // GET /api/invites/:id
 export const getInvite = async (req, res) => {

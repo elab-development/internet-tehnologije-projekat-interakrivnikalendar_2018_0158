@@ -1,9 +1,12 @@
 import React, { useEffect, useState } from 'react';
+import axios from 'axios';
 import dayjs from 'dayjs';
 
 import GlobalContext from './GlobalContext';
 import { getCategories } from '../api/categoryRequests';
 import { getUsers } from '../api/authRequests';
+import { useFetch } from '../hooks/fetch.hook';
+import { getUsername } from '../utils/helpers';
 
 const ContextWrapper = (props) => {
   const [monthIndex, setMonthIndex] = useState(dayjs().month());
@@ -13,6 +16,7 @@ const ContextWrapper = (props) => {
   const [categories, setCategories] = useState([]);
   const [selectedEvent, setSelectedEvent] = useState(null);
   const [allUsers, setAllUsers] = useState([]);
+  const [loggedInUserData, setLoggedInUserData] = useState(null);
 
   useEffect(() => {
     if (smallCalendarMonth !== null) {
@@ -45,8 +49,16 @@ const ContextWrapper = (props) => {
         });
     };
 
+    const fetchLoggedInUser = async () => {
+      const { username } = await getUsername();
+      const { data } = await axios.get(`/api/auth/user/${username}`);
+      setLoggedInUserData(data);
+      console.log(data);
+    };
+
     fetchCategories();
     fetchUsers();
+    fetchLoggedInUser();
   }, []);
 
   return (
@@ -66,6 +78,8 @@ const ContextWrapper = (props) => {
         setSelectedEvent,
         allUsers,
         setAllUsers,
+        loggedInUserData,
+        setLoggedInUserData,
       }}
     >
       {props.children}

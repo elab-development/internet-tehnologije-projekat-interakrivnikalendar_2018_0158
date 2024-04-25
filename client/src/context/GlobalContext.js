@@ -15,6 +15,8 @@ const GlobalContext = React.createContext({
   setSelectedEvent: () => {},
   allUsers: [],
   setAllUsers: () => {},
+  loggedInUserData: null,
+  setLoggedInUserData: () => {},
 });
 
 export default GlobalContext;

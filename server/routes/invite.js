@@ -8,6 +8,7 @@ router.route('/').post(inviteController.createInvite);
 
 // GET Endpoints
 router.route('/').get(inviteController.getInvites);
+router.route('/populated').get(inviteController.getSentInvitesPopulated);
 router.route('/:id').get(inviteController.getInvite);
 
 // PUT Endpoints

@@ -2,16 +2,16 @@ import mongoose from 'mongoose';
 
 const InviteSchema = new mongoose.Schema({
   from: {
-    type: String,
-    required: true,
+    type: mongoose.Schema.Types.ObjectId,
+    ref: 'User',
   },
   to: {
-    type: String,
-    required: true,
+    type: mongoose.Schema.Types.ObjectId,
+    ref: 'User',
   },
   event: {
-    type: String,
-    required: true,
+    type: mongoose.Schema.Types.ObjectId,
+    ref: 'Event',
   },
   rsvp: {
     type: Boolean,
@@ -19,6 +19,7 @@ const InviteSchema = new mongoose.Schema({
   },
   answer: {
     type: String,
+    default: 'notanswered',
   },
 });
 

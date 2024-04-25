@@ -42,6 +42,24 @@ export const getInvites = async (query) => {
   }
 };
 
+// Get Invites Populated
+export const getInvitesPopulated = async (query) => {
+  const { id, type } = query;
+
+  try {
+    const { data, status } = await axios.get(
+      `/api/invites/populated?id=${id}&type=${type}`
+    );
+
+    if (status === 200) {
+      return data;
+    }
+  } catch (error) {
+    return Promise.reject({ error });
+  }
+};
+
+
 // Get Invite
 export const getInvite = async (id) => {
   try {

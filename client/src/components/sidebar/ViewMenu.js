@@ -4,7 +4,7 @@ const ViewMenu = ({ setView, view }) => {
   return (
     <div className='mt-5'>
       <ul
-        class='py-2 text-sm text-gray-500 font-bold'
+        className='py-2 text-sm text-gray-500 font-bold'
         aria-labelledby='dropdownLargeButton'
       >
         <li
