@@ -21,6 +21,8 @@ const GlobalContext = React.createContext({
   setAllUsers: () => {},
   loggedInUserData: null,
   setLoggedInUserData: () => {},
+  publicHolidays: [],
+  setPublicHolidays: () => {},
 });
 
 export default GlobalContext;

@@ -10,6 +10,7 @@ import Loader from './Loader';
 const Day = ({ day, rowIdx }) => {
   const [dayEvents, setDayEvents] = useState([]);
   const [dayPublicEvents, setDayPublicEvents] = useState([]);
+  const [dayPublicHolidays, setDayPublicHolidays] = useState([]);
   
   const getCurrentDayClass = () => {
     return day.format('DD-MM-YY') === dayjs().format('DD-MM-YY')
@@ -23,6 +24,7 @@ const Day = ({ day, rowIdx }) => {
     categories,
     showEventModal,
     setSelectedEvent,
+    publicHolidays,
   } = useContext(GlobalContext);
   
   const [{ isLoading, apiData, serverError }] = useFetch();
@@ -61,6 +63,14 @@ const Day = ({ day, rowIdx }) => {
         });
     }, [apiData, day]);
 
+    useEffect(() => {
+      const publicHolidaysForThisDay = publicHolidays.filter(
+        (publicHoliday) =>
+          day.format('DD-MM-YY') === dayjs(publicHoliday.date).format('DD-MM-YY')
+      );
+      setDayPublicHolidays(publicHolidaysForThisDay);
+    }, [publicHolidays]);
+
   if (serverError) return <h2>{serverError}</h2>;
 
   return (
@@ -73,6 +83,14 @@ const Day = ({ day, rowIdx }) => {
           {day.format('DD')}
         </p>
       </header>
+      {dayPublicHolidays.map((publicHoliday, i) => (
+        <div
+          key={i}
+          className='bg-gray-500 text-white rounded p-1 text-sm mb-1 truncate hover:bg-opacity-50'
+        >
+          {publicHoliday.name}
+        </div>
+      ))}
       {dayPublicEvents.map((publicEvent, i) => (
         <div
           key={i}

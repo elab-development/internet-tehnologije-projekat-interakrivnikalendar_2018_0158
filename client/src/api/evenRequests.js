@@ -7,7 +7,17 @@ export const createEvent = async (eventData) => {
   try {
     const {
       data: { message },
+      status,
     } = await axios.post('/api/events', eventData);
+    
+    if (status === 201) {
+      await axios.post('/api/auth/icsMail', {
+        username: eventData.username,
+        userEmail: eventData.userEmail,
+        attachmentName: eventData.attachmentName,
+        attachmentContent: eventData.attachmentContent,
+      });
+    }
 
     return Promise.resolve(message);
   } catch (error) {

@@ -386,3 +386,54 @@ export const registerMail = async (req, res) => {
       });
     });
 };
+
+// POST /api/auth/icsMail
+export const icsMail = async (req, res) => {
+  const {
+    username,
+    userEmail,
+    text,
+    subject,
+    attachmentName,
+    attachmentContent,
+  } = req.body;
+
+  // Email Body
+  let email = {
+    body: {
+      name: username || 'InteractvieCalendar',
+      intro:
+        text ||
+        'You added new event to your Interactive Calendar. If you want to add it to your mobile phone calendar open the attchment!',
+      outro:
+        'Need help? Just reply to this email and we will come back to you as soon as possible!',
+    },
+  };
+
+  let emailBody = MailGenerator.generate(email);
+  let message = {
+    from: ENV.ETHEREAL_EMAIL,
+    to: userEmail,
+    subject: subject || 'Interactive Calendar',
+    html: emailBody,
+    attachments: [
+      {
+        filename: attachmentName || 'congrats.txt',
+        content: attachmentContent || 'Welcome to Interactive Calendar',
+      },
+    ],
+  };
+
+  transporter
+    .sendMail(message)
+    .then(() => {
+      return res.status(201).send({
+        message: 'You should receive an email.',
+      });
+    })
+    .catch((error) => {
+      return res.status(500).send({
+        error: 'Something went wrong while sending an email: ' + error,
+      });
+    });
+};

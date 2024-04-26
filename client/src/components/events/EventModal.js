@@ -6,6 +6,7 @@ import { createEvent, deleteEvent, updateEvent } from '../../api/eventRequests';
 import { useFetch } from '../../hooks/fetch.hook';
 import Loader from '../Loader';
 import InviteModal from '../invites/InviteModal';
+import { generateIcs } from '../../utils/icsGenerator';
 
 const EventModal = () => {
   const {
@@ -14,6 +15,7 @@ const EventModal = () => {
     categories,
     setSelectedEvent,
     selectedEvent,
+    loggedInUserData,
   } = useContext(GlobalContext);
 
   const [title, setTitle] = useState(selectedEvent?.title || '');
@@ -33,6 +35,16 @@ const EventModal = () => {
 
     var date = new Date(daySelected);
 
+    let icsData = {
+      title: title,
+      description: description,
+      start: date,
+      end: date,
+      location: location,
+    };
+
+    const icsContent = generateIcs(icsData);
+
     let eventData = {
       title: title,
       description: description,
@@ -40,6 +52,10 @@ const EventModal = () => {
       location: location,
       category: selectedCategory,
       date: date.toLocaleDateString(),
+      username: loggedInUserData.username,
+      userEmail: loggedInUserData.email,
+      attachmentName: `${title}.ics`,
+      attachmentContent: icsContent,
     };
 
     let createPromise = createEvent(eventData);

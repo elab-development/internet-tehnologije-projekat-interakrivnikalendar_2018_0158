@@ -6,6 +6,7 @@ import GlobalContext from './GlobalContext';
 import { getCategories } from '../api/categoryRequests';
 import { getUsers } from '../api/authRequests';
 import { getUsername } from '../utils/helpers';
+import { getPublicHolidays } from '../utils/webServices';
 
 const ContextWrapper = (props) => {
   const [monthIndex, setMonthIndex] = useState(dayjs().month());
@@ -18,6 +19,7 @@ const ContextWrapper = (props) => {
   const [selectedEvent, setSelectedEvent] = useState(null);
   const [allUsers, setAllUsers] = useState([]);
   const [loggedInUserData, setLoggedInUserData] = useState(null);
+  const [publicHolidays, setPublicHolidays] = useState([]);
 
   useEffect(() => {
     if (smallCalendarMonth !== null) {
@@ -77,6 +79,15 @@ const ContextWrapper = (props) => {
     fetchCategories();
   }, [showCategoriesModal]);
 
+  useEffect(() => {
+    const getHolidays = async () => {
+      const res = await getPublicHolidays();
+      setPublicHolidays(res);
+    };
+
+    getHolidays();
+  }, []);
+
   return (
     <GlobalContext.Provider
       value={{
@@ -100,6 +111,8 @@ const ContextWrapper = (props) => {
         setAllUsers,
         loggedInUserData,
         setLoggedInUserData,
+        publicHolidays,
+        setPublicHolidays,
       }}
     >
       {props.children}
