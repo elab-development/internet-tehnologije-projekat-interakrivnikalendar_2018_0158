@@ -36,9 +36,7 @@ const ViewMenu = ({ setView, view }) => {
         </li>
         <li
           onClick={() => navigate('/profile')}
-          className={`cursor-pointer block px-4 py-2 rounded hover:bg-gray-300 ${
-            view === 'sentinvites' && 'bg-gray-200'
-          }`}
+          className={`cursor-pointer block px-4 py-2 rounded hover:bg-gray-300 `}
         >
           Profile
         </li>
