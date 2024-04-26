@@ -11,6 +11,8 @@ const GlobalContext = React.createContext({
   setShowEventModal: () => {},
   showPublicEventModal: false,
   setShowPublicEventModal: () => {},
+  showCategoriesModal: false,
+  setShowCategoriesModal: () => {},
   categories: [],
   setCategories: () => {},
   selectedEvent: null,

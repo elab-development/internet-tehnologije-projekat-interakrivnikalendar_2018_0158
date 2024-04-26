@@ -1,6 +1,9 @@
 import React from 'react';
+import { useNavigate } from 'react-router-dom';
 
 const ViewMenu = ({ setView, view }) => {
+  const navigate = useNavigate();
+
   return (
     <div className='mt-5'>
       <ul
@@ -30,6 +33,14 @@ const ViewMenu = ({ setView, view }) => {
           }`}
         >
           Sent Invites
+        </li>
+        <li
+          onClick={() => navigate('/profile')}
+          className={`cursor-pointer block px-4 py-2 rounded hover:bg-gray-300 ${
+            view === 'sentinvites' && 'bg-gray-200'
+          }`}
+        >
+          Profile
         </li>
       </ul>
     </div>

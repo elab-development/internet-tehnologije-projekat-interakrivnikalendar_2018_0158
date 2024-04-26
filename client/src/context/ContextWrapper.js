@@ -13,6 +13,7 @@ const ContextWrapper = (props) => {
   const [daySelected, setDaySelected] = useState(dayjs());
   const [showEventModal, setShowEventModal] = useState(false);
   const [showPublicEventModal, setShowPublicEventModal] = useState(false);
+  const [showCategoriesModal, setShowCategoriesModal] = useState(false);
   const [categories, setCategories] = useState([]);
   const [selectedEvent, setSelectedEvent] = useState(null);
   const [allUsers, setAllUsers] = useState([]);
@@ -60,6 +61,22 @@ const ContextWrapper = (props) => {
     fetchLoggedInUser();
   }, []);
 
+  useEffect(() => {
+    const fetchCategories = async () => {
+      const categoriesPromise = getCategories();
+
+      categoriesPromise
+        .then((data) => {
+          setCategories(data);
+        })
+        .catch((error) => {
+          console.log(error);
+        });
+    };
+
+    fetchCategories();
+  }, [showCategoriesModal]);
+
   return (
     <GlobalContext.Provider
       value={{
@@ -73,6 +90,8 @@ const ContextWrapper = (props) => {
         setShowEventModal,
         showPublicEventModal,
         setShowPublicEventModal,
+        showCategoriesModal,
+        setShowCategoriesModal,
         categories,
         setCategories,
         selectedEvent,

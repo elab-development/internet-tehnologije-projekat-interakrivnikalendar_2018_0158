@@ -2,7 +2,6 @@ import React, { useContext, useState } from 'react';
 import toast, { Toaster } from 'react-hot-toast';
 
 import GlobalContext from '../../context/GlobalContext';
-import Loader from '../Loader';
 import { createPublicEvent } from '../../api/publicEventRequests';
 
 const PublicEventModal = () => {

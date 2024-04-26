@@ -7,7 +7,7 @@ export const createCategory = async (categoryData) => {
   try {
     const {
       data: { message },
-    } = await axios.post('/api/events', categoryData);
+    } = await axios.post('/api/categories', categoryData);
 
     return Promise.resolve(message);
   } catch (error) {

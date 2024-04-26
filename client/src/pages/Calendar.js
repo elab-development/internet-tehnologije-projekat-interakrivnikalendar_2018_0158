@@ -8,13 +8,18 @@ import Month from '../components/Month';
 import Invites from '../components/Invites';
 import EventModal from '../components/events/EventModal';
 import PublicEventModal from '../components/events/PublicEventModal';
+import CategoryModal from '../components/events/CategoryModal';
 
 const Calendar = () => {
   const [currentMonth, setCurrentMonth] = useState(getMonth());
   const [view, setView] = useState('month');
   
-  const { monthIndex, showEventModal, showPublicEventModal } =
-    useContext(GlobalContext);
+  const {
+    monthIndex,
+    showEventModal,
+    showPublicEventModal,
+    showCategoriesModal,
+  } = useContext(GlobalContext);
 
   useEffect(() => {
     setCurrentMonth(getMonth(monthIndex));
@@ -33,6 +38,7 @@ const Calendar = () => {
       </div>
       {showEventModal && <EventModal />}
       {showPublicEventModal && <PublicEventModal />}
+      {showCategoriesModal && <CategoryModal />}
     </>
   );
 };
